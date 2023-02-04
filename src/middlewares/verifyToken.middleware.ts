@@ -32,6 +32,10 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
                 message: 'Not authorised to consume this endpoint'
             })
         }
+
+        //Pass something to next request (id of user || other info)
+
+        next()
     })
 
 }

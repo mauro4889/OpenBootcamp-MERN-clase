@@ -1,6 +1,8 @@
 import { LogInfo } from '../utils/logger'
-import express, {Request, Response} from 'express'
+import express, { Request, Response } from 'express'
 import { UserController } from '../controller/UsersController'
+import { IUser } from '../domain/interfaces/IUser.interface'
+
 
 let userRouter = express.Router()
 
@@ -42,7 +44,7 @@ userRouter.route('/')
             email: email || 'default email',
             age: age || 18
         }
-        
+
         const response: any = await controller.createUser(user)
 
         return res.status(201).send(response)
