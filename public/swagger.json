@@ -1,0 +1,29 @@
+{
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "ejercicio-1",
+		"version": "1.0.0",
+		"description": "Primer ejercicio curso MERN",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {
+			"name": "Mauro Spinello"
+		}
+	},
+	"openapi": "3.0.0",
+	"paths": {},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}
