@@ -13,3 +13,8 @@ export type GreetingResponse = {
     message: string,
     data: Date
 }
+
+export type AuthResponse  = {
+    message: string,
+    token: string
+}

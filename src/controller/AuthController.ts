@@ -4,6 +4,7 @@ import { LogSuccess, LogWarning } from "../utils/logger";
 import { IUser } from "../domain/interfaces/IUser.interface";
 import { IAuth } from "../domain/interfaces/IAuth.interface";
 import { registerUser, loginUser, logoutUser } from "../domain/orm/User.orm";
+import { AuthResponse, ErrorResponse } from "./types";
 
 @Route("/api/auth")
 @Tags("AuthController")
@@ -15,8 +16,9 @@ export class AuthController implements IAuthController{
         let response: any = ''
 
         if(user){
-            LogSuccess(`[/api/auth/register] Register user successfully ${user}`)
+            LogSuccess(`[/api/auth/register] Register user successfully ${user.email}`)
             await registerUser(user).then((r) => {
+                LogSuccess(`[/api/auth/register] Created user successfully ${user.email}`)
                 response = {
                     status: 204,
                     message: `User register successfully: ${user.name}`
@@ -37,21 +39,19 @@ export class AuthController implements IAuthController{
     @Post("/login")
     async loginUser(auth: IAuth): Promise<any> {
 
-        let response: any = ''
+        let response: AuthResponse | ErrorResponse | undefined
 
         if(auth){
             LogSuccess(`[/api/auth/login] Login user successfully ${auth.email}`)
-            await loginUser(auth).then((r) => {
-                response = {
-                    status: 204,
-                    message: `User logged successfully: ${auth.email}`,
-                    token: r.token
-                }
-            })
+            let data = await loginUser(auth)
+            response = {
+                token: data.token,
+                message: `Welcome, ${data.user.name}`
+            }
         }else {
             LogWarning('[/api/auth/login] Login needs Auth Entity (email && password)')
             response = {
-                status: 400,
+                error: '[AUTH ERROR]: Email & Password are needed',
                 message: 'Please, provide a email && password to login'
             }
         }
@@ -60,7 +60,7 @@ export class AuthController implements IAuthController{
 
     }
 
-    @Post('/logoute')
+    @Post('/logout')
     async logoutUser(): Promise<any>{
         let response: any = ''
     }

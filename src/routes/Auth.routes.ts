@@ -3,53 +3,64 @@ import { AuthController } from '../controller/AuthController'
 import { IUser } from '../domain/interfaces/IUser.interface'
 import bcrypt from 'bcrypt'
 import { IAuth } from '../domain/interfaces/IAuth.interface'
+import bodyParser from 'body-parser'
 
 
 let authRouter = express.Router()
+let jsonParser = bodyParser.json()
 
-authRouter.route('/auth/register')
-.post(async (req: Request, res: Response) => {
+authRouter.route('/register')
+    .post(jsonParser, async (req: Request, res: Response) => {
 
-    let {name, email, password, age} = req.body
+        let { name, email, password, age } = req?.body
+        let hashedPassword = ''
 
-    if (password && name && email && age) {
-        //Obtain the password in request and cypher
-        
-        let hashedPassword = bcrypt.hashSync(password, 8)
+        if (password && name && email && age) {
+            //Obtain the password in request and cypher
 
-        let newUser: IUser = {
-            name,
-            email,
-            password: hashedPassword,
-            age
+            hashedPassword = bcrypt.hashSync(password, 8)
+
+            let newUser: IUser = {
+                name,
+                email,
+                password: hashedPassword,
+                age
+            }
+
+            const controller: AuthController = new AuthController()
+
+            const response: any = await controller.registerUser(newUser)
+
+            return res.status(200).send(response)
+        } else {
+            return res.status(400).send({
+                message: '[ERROR User Data missing]: No user can be registered'
+            })
         }
+    })
 
-        const controller: AuthController = new AuthController()
+authRouter.route('/login')
+    .post(jsonParser, async (req: Request, res: Response) => {
 
-        const response: any = await controller.registerUser(newUser)
+        let { email, password } = req?.body
 
-        return res.status(200).send(response)
-    }
-})
+        if (password && email) {
 
-authRouter.route('/auth/login')
-.post(async (req: Request, res: Response) => {
+            const controller: AuthController = new AuthController()
 
-    let {email, password} = req.body
+            let auth: IAuth = {
+                email: email,
+                password: password
+            }
 
-    if (password && email) {
+            const response: any = await controller.loginUser(auth)
 
-        const controller: AuthController = new AuthController()
-
-        let auth: IAuth = {
-            email: email,
-            password: password
+            return res.status(200).send(response)
+        } else {
+            return res.status(400).send({
+                message: '[ERROR User Data missing]: No user can be registered'
+            })
         }
-
-        const response: any = await controller.loginUser(auth)
-
-        return res.status(200).send(response)
-    }
-})
+    })
 
 export default authRouter
